@@ -1,0 +1,81 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+      .bg{
+          height: 300px;
+          background: #000;
+          overflow: hidden;
+      }
+      .utf{
+          position: absolute;
+          top: 0;
+          right: 0;
+          color: #fff;
+          animation: goleft 5s linear;
+          font-size: 26px;
+          opacity: 0;
+      }
+      @keyframes goleft{
+          0% {
+              right:0%;
+              opacity: 0;
+          }
+          4%{
+              opacity: 1;
+          }
+          100%{
+              right: 100%;
+              opacity: 1;
+              display: none;
+          }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg" id="bg">
+        <p class="utf">hello</p>
+    </div>
+    <ul id="messages"></ul>
+      <input id="m" autocomplete="off" /><button id="btn">Send</button>
+    <script src="/socket.io.js"></script>
+    <script>
+        console.log(io)
+        const client = io()
+        const btn = document.getElementById('btn')
+        btn.addEventListener('click',function(){
+            const m = document.getElementById('m')
+            const val = m.value
+            client.emit('chat',val)
+            m.value = ''
+        })
+        // setInterval(function(){
+        //     client.emit('chat','123456123132')
+        // },100)
+        client.on('server',function(msg){
+            console.log(msg)
+            let child = document.createElement('p')
+            child.className = 'utf'
+            child.innerText = msg
+            bg.appendChild(child)
+        })
+        client.on('emit',function(msg){
+            console.log(msg)
+        })
+
+        // console.log()
+        setTimeout(function(){
+            console.log(document.querySelector('.utf').offsetParent)
+        },10000)
+    </script>
+</body>
+</html>
