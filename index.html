@@ -15,6 +15,7 @@
           height: 300px;
           background: #000;
           overflow: hidden;
+          position: relative;
       }
       .utf{
           position: absolute;
@@ -39,17 +40,30 @@
               display: none;
           }
       }
+
+
+      /* box */
+        .message-box{
+            height: 500px;
+            width: 300px;
+            background: #f2f2f2;
+        }
+
+      /* box */
     </style>
   </head>
   <body>
     <div class="bg" id="bg">
         <p class="utf">hello</p>
     </div>
+    <div class="message-box">
+
+
+    </div>
     <ul id="messages"></ul>
       <input id="m" autocomplete="off" /><button id="btn">Send</button>
     <script src="/socket.io.js"></script>
     <script>
-        console.log(io)
         const client = io()
         const btn = document.getElementById('btn')
         btn.addEventListener('click',function(){
@@ -62,20 +76,27 @@
         //     client.emit('chat','123456123132')
         // },100)
         client.on('server',function(msg){
-            console.log(msg)
             let child = document.createElement('p')
             child.className = 'utf'
             child.innerText = msg
+            child.style.top = parseInt(Math.random() * 98) + '%'
             bg.appendChild(child)
+            setTimeout(() => {
+                bg.removeChild(child)
+            }, 5000);
         })
         client.on('emit',function(msg){
             console.log(msg)
         })
-
+        client.on('all',function(data){
+            console.log(data)
+        })
         // console.log()
-        setTimeout(function(){
-            console.log(document.querySelector('.utf').offsetParent)
-        },10000)
+        setInterval(function(){
+            client.emit('chat',(new Date()).getTime())
+        },1000)
+
+
     </script>
 </body>
 </html>

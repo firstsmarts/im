@@ -8,12 +8,20 @@ app.use(express.static('public'))
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
-
+let users = {
+  
+}
 io.on('connection', function(socket){
-    socket.broadcast.emit('self','welcome')
+  socket.id in users ? null : users[socket.id] = socket
+  // 当前在线
+  io.emit('all',Object.keys(users).length)
+  socket.broadcast.emit('self','welcome')
   socket.on('chat',function(msg,id){
-    console.log('message: '+msg + id)
     socket.emit('server', msg);
+  })
+  console.log(users)
+  socket.on('disconnect',function(){
+    delete users[socket.id]
   })
 });
 
